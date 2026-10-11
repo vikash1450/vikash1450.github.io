@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f6bff">
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Owner AI</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#2f6bff">
-<link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#fff;--fg:#1b1b1b;--mute:#6c6c6c;--card:#f1f1f1;--line:#e3e3e3;--blue:#2f6bff;--pill:#e6efff;--pillfg:#1558d6}
@@ -52,18 +52,6 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
 #gbtn{display:flex;justify-content:center;min-height:44px}
 .soon{color:var(--mute);font-size:13px;margin:18px 0 0}
 #lerr{color:#d33;margin:12px 0 0;font-size:14px}
-#sb{position:fixed;top:0;bottom:0;left:-82%;width:78%;max-width:320px;background:var(--bg);border-right:1px solid var(--line);z-index:20;padding:calc(env(safe-area-inset-top,0px) + 18px) 18px 18px;display:flex;flex-direction:column;transition:left .25s}
-#sb.open{left:0}
-#ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15}
-#sb h2{font-family:Georgia,serif;font-size:30px;font-weight:500;margin:6px 0 22px}
-.lab{color:var(--mute);margin:0 0 8px;font-size:14px}
-#rl{list-style:none;margin:0;padding:0;flex:1;overflow-y:auto}
-#rl li{display:flex;align-items:center;gap:8px;padding:11px 4px;cursor:pointer;font-size:16px}
-#rl li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#rl li button{border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer}
-.sbf{display:flex;gap:10px;align-items:center;justify-content:space-between}
-#nc{background:var(--fg);color:var(--bg);border:0;border-radius:24px;padding:13px 20px;font:inherit;font-size:16px;cursor:pointer}
-#out2{background:var(--card);color:var(--fg);border:0;border-radius:24px;padding:13px 18px;font:inherit;font-size:15px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -83,8 +71,6 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
   <footer>Developed by Vikash</footer>
 </section>
 <div id="app" hidden>
-<aside id="sb"><h2>Owner AI</h2><div class="lab">Recents</div><ul id="rl"></ul><div class="sbf"><button id="nc">+ New chat</button><button id="out2">Logout</button></div></aside>
-<div id="ov" hidden></div>
 <header>
   <button class="rb" id="menu" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h10"/></svg></button>
   <span class="pill">✦ Owner AI</span>
@@ -105,7 +91,7 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
   <button data-q="Tum kaun ho aur kya kar sakte ho?">❓ Tum kaun ho?</button>
 </div>
 <form id="f" autocomplete="off">
-  <input id="t" type="text" placeholder="Ask Owner AI" enterkeyhint="send" aria-label="Ask Owner AI">
+  <input id="t" type="text" placeholder="Owner AI se poochiye" enterkeyhint="send" aria-label="Apna sawal likhiye">
   <button type="button" id="mic" aria-label="Bolkar poochiye"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
   <button type="submit" id="send" aria-label="Bhejo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 </form>
@@ -121,10 +107,10 @@ function load(){try{return localStorage.getItem('oai_tok')}catch(e){return null}
 function save(v){try{v?localStorage.setItem('oai_tok',v):localStorage.removeItem('oai_tok')}catch(e){}}
 function show(c){
   const p=c&&jwt(c);
-  if(p&&p.exp*1000>Date.now()+60000){tok=c;uid=p.sub||'u';loadChats();renderList();$('login').hidden=true;$('app').hidden=false;$('who').textContent='Namaste, '+(p.given_name||p.name||'dost')+'!';return true}
+  if(p&&p.exp*1000>Date.now()+60000){tok=c;$('login').hidden=true;$('app').hidden=false;$('who').textContent='Namaste, '+(p.given_name||p.name||'dost')+'!';return true}
   tok=null;$('app').hidden=true;$('login').hidden=false;return false;
 }
-function reset(){cur=null;hist.length=0;log.querySelectorAll('.m').forEach(e=>e.remove());$('empty').hidden=false;$('sug').hidden=false;busy=false}
+function reset(){hist.length=0;log.querySelectorAll('.m').forEach(e=>e.remove());$('empty').hidden=false;$('sug').hidden=false;busy=false}
 function logout(msg){save(null);reset();show(null);$('lerr').textContent=msg||'';try{google.accounts.id.disableAutoSelect()}catch(e){}}
 function add(txt,who){const d=document.createElement('div');d.className='m '+who;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
 async function ask(q){
@@ -137,49 +123,18 @@ async function ask(q){
     if(r.status===401){logout('Login ka samay khatam ho gaya. Dobara login kijiye.');return}
     const j=await r.json();
     const a=j.reply||'Jawab nahi mila, dobara try kijiye.';
-    w.textContent=a;hist.push({role:'assistant',content:a});saveChat();
+    w.textContent=a;hist.push({role:'assistant',content:a});
   }catch(e){w.textContent='Network ki dikkat hai. Internet check karke dobara try kijiye.';hist.pop()}
   busy=false;log.scrollTop=log.scrollHeight;
 }
 $('f').onsubmit=e=>{e.preventDefault();ask(t.value)};
 document.querySelectorAll('#sug button').forEach(b=>b.onclick=()=>ask(b.dataset.q));
-$('menu').onclick=openSb;
+$('menu').onclick=()=>{$('about').hidden=!$('about').hidden};
 $('new').onclick=reset;
 $('out').onclick=()=>{$('about').hidden=true;logout('')};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(SR){const rec=new SR();rec.lang='hi-IN';rec.onresult=e=>ask(e.results[0][0].transcript);$('mic').onclick=()=>{try{rec.start()}catch(e){}}}
 else $('mic').hidden=true;
-let chats=[],cur=null,uid='u';
-const sb=$('sb');
-function openSb(){sb.classList.add('open');$('ov').hidden=false}
-function closeSb(){sb.classList.remove('open');$('ov').hidden=true}
-function loadChats(){try{chats=JSON.parse(localStorage.getItem('oai_chats_'+uid)||'[]')}catch(e){chats=[]}}
-function persist(){try{localStorage.setItem('oai_chats_'+uid,JSON.stringify(chats))}catch(e){}}
-function saveChat(){
-  if(!hist.length)return;
-  if(!cur){cur=Date.now();chats.push({id:cur,title:hist[0].content.slice(0,30),msgs:[]})}
-  chats.find(c=>c.id===cur).msgs=hist.slice();
-  persist();renderList();
-}
-function openChat(id){
-  const c=chats.find(x=>x.id===id);if(!c)return;
-  reset();cur=id;$('empty').hidden=true;$('sug').hidden=true;
-  c.msgs.forEach(m=>{hist.push(m);add(m.content,m.role==='user'?'me':'ai')});
-  closeSb();
-}
-function renderList(){
-  const ul=$('rl');ul.innerHTML='';
-  chats.slice().reverse().forEach(c=>{
-    const li=document.createElement('li'),sp=document.createElement('span'),x=document.createElement('button');
-    sp.textContent=c.title;x.textContent='✕';x.setAttribute('aria-label','Delete');
-    li.onclick=()=>openChat(c.id);
-    x.onclick=e=>{e.stopPropagation();chats=chats.filter(k=>k.id!==c.id);persist();if(cur===c.id)reset();renderList()};
-    li.appendChild(sp);li.appendChild(x);ul.appendChild(li);
-  });
-}
-$('ov').onclick=closeSb;
-$('nc').onclick=()=>{reset();closeSb()};
-$('out2').onclick=()=>{closeSb();logout('')};
 show(load());
 window.addEventListener('load',()=>{
   try{
@@ -189,6 +144,5 @@ window.addEventListener('load',()=>{
   }catch(e){$('lerr').textContent='Google login load nahi hua. Internet check karke page refresh kijiye.'}
 });
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
 </body>
 </html>
