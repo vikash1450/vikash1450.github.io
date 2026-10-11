@@ -2,110 +2,84 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Owner AI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050a18;--panel:#0b1429;--line:#1b2a4d;--text:#e8eefc;--mute:#8a99bd;--blue:#4c8dff;--glow:rgba(76,141,255,.35)}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:Sora,system-ui,"Noto Sans Devanagari",sans-serif;line-height:1.6;min-height:100vh;
-background-image:radial-gradient(circle at 15% 0%,rgba(76,141,255,.16),transparent 45%),radial-gradient(circle at 90% 60%,rgba(76,141,255,.08),transparent 40%)}
-a{color:var(--blue)}
-:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
-header,main,footer{max-width:960px;margin:0 auto;padding:0 20px}
-header{display:flex;justify-content:space-between;align-items:center;padding-top:22px;padding-bottom:10px}
-.logo{font-weight:800;font-size:18px;letter-spacing:.3px}
-.logo i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 14px var(--blue);margin-right:8px}
-nav a{color:var(--mute);text-decoration:none;font-size:14px;margin-left:18px}
-nav a:hover{color:var(--text)}
-.hero{padding:56px 0 34px}
-h1{font-size:clamp(52px,13vw,120px);font-weight:800;line-height:.95;letter-spacing:-3px}
-h1 span{color:var(--blue);text-shadow:0 0 40px var(--glow)}
-.hero p{max-width:520px;color:var(--mute);margin-top:22px;font-size:17px}
-.chat{margin:30px 0 70px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 0 60px rgba(76,141,255,.12);overflow:hidden}
-.chat-top{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
-.chat-top b{color:var(--text)}
-#log{height:300px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-.m{max-width:80%;padding:10px 14px;border-radius:12px;font-size:15px;white-space:pre-wrap}
-.m.ai{background:#101c3a;border:1px solid var(--line);align-self:flex-start}
-.m.me{background:var(--blue);color:#04122e;align-self:flex-end;font-weight:600}
-.chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px}
-.chips button{background:transparent;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
-.chips button:hover{color:var(--text);border-color:var(--blue)}
-.send{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
-.send input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);font:inherit;font-size:15px}
-.send button{background:var(--blue);color:#04122e;border:0;border-radius:10px;padding:0 20px;font:inherit;font-weight:800;cursor:pointer}
-h2{font-size:26px;margin-bottom:18px}
-.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px;margin-bottom:70px}
-.feat div{border-left:2px solid var(--blue);padding-left:16px}
-.feat h3{font-size:17px;margin-bottom:6px}
-.feat p{color:var(--mute);font-size:14.5px}
-footer{padding-bottom:40px;color:var(--mute);font-size:13px;border-top:1px solid var(--line);padding-top:20px}
-@media (prefers-reduced-motion:no-preference){.hero h1{animation:rise .8s ease both}@keyframes rise{from{opacity:0;transform:translateY(14px)}}}
+:root{--bg:#fff;--fg:#1b1b1b;--mute:#6c6c6c;--card:#f1f1f1;--line:#e3e3e3;--blue:#2f6bff;--pill:#e6efff;--pillfg:#1558d6}
+@media(prefers-color-scheme:dark){:root{--bg:#141414;--fg:#ececec;--mute:#9b9b9b;--card:#2a2a2a;--line:#343434;--pill:#1c2a47;--pillfg:#8ab4ff}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{height:100dvh;display:flex;flex-direction:column;background:radial-gradient(circle at 12% 0,var(--pill),transparent 42%),var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+header{display:flex;align-items:center;gap:10px;padding:10px 14px}
+.rb{width:44px;height:44px;border-radius:50%;border:0;background:var(--card);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.pill{background:var(--pill);color:var(--pillfg);font-weight:600;padding:11px 18px;border-radius:24px;font-size:16px}
+.sp{flex:1}
+#about{margin:0 14px 6px;padding:14px 16px;background:var(--card);border-radius:18px;font-size:15px;line-height:1.5}
+#log{flex:1;overflow-y:auto;padding:8px 18px}
+#empty{text-align:center;margin-top:18vh}
+#empty h1{font-size:30px;margin:0 0 10px}
+#empty p{margin:0;color:var(--mute);font-size:17px;line-height:1.6}
+.m{max-width:86%;margin:12px 0;line-height:1.55;font-size:16.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.me{margin-left:auto;background:var(--card);padding:10px 16px;border-radius:20px}
+.ai{padding:0 2px}
+#sug{padding:0 18px 6px}
+#sug button{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;padding:13px 4px;font:inherit;font-size:17px;color:var(--mute);text-align:left;cursor:pointer}
+#f{display:flex;align-items:center;gap:4px;margin:6px 14px 4px;padding:6px 6px 6px 20px;background:var(--bg);border:1px solid var(--line);border-radius:30px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+#t{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:16px;padding:10px 0}
+#mic{width:42px;height:42px;border:0;background:none;color:var(--fg);display:grid;place-items:center;cursor:pointer}
+#send{width:42px;height:42px;border:0;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;cursor:pointer}
+button:focus-visible,#t:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo"><i></i>Owner AI</div>
-  <nav><a href="#chat">Chat</a><a href="#about">About</a></nav>
+  <button class="rb" id="menu" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h10"/></svg></button>
+  <span class="pill">✦ Owner AI</span>
+  <span class="sp"></span>
+  <button class="rb" id="new" aria-label="Nayi chat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
 </header>
-
-<main>
-  <section class="hero">
-    <h1>Owner<br><span>AI</span></h1>
-    <p>Aapka apna AI saathi. Sawal poochiye, idea banaiye, aur kaam aasaan kijiye. Hindi aur English dono mein.</p>
-  </section>
-
-  <section class="chat" id="chat" aria-label="Owner AI chat">
-    <div class="chat-top"><b>Owner AI</b><span>Live</span></div>
-    <div id="log" aria-live="polite"></div>
-    <div class="chips">
-      <button>Tum kaun ho?</button>
-      <button>Kya kar sakte ho?</button>
-      <button>Ek idea do</button>
-    </div>
-    <form class="send" id="f">
-      <input id="t" placeholder="Yahan likhiye..." autocomplete="off" aria-label="Message">
-      <button type="submit">Bhejo</button>
-    </form>
-  </section>
-
-  <section id="about">
-    <h2>Owner AI kya hai</h2>
-    <div class="feat">
-      <div><h3>Seedha jawab</h3><p>Lamba ghumaye bina, aapke sawal ka saaf jawab.</p></div>
-      <div><h3>Hindi + English</h3><p>Jis bhasha mein likhein, usi mein baat.</p></div>
-      <div><h3>Aapka apna</h3><p>Ye site aapki hai, aapke naam se chalti hai.</p></div>
-    </div>
-  </section>
+<div id="about" hidden><b>Owner AI</b> ko <b>Vikash</b> ne develop kiya hai.<br>Hindi aur English dono mein baat karta hai.</div>
+<main id="log">
+  <div id="empty"><h1>Namaste! 👋</h1><p>Main Owner AI hun.<br>Mujhe <b>Vikash</b> ne banaya hai.</p></div>
 </main>
-
-<footer>&copy; <span id="y"></span> Owner AI. AI jawab galat bhi ho sakte hain, zaroori baatein dobara jaanch lein.</footer>
-
+<div id="sug">
+  <button data-q="Mujhe ek acha idea do">💡 Ek idea do</button>
+  <button data-q="Mujhe ek chhota paragraph likhne mein madad karo">✍️ Likhne mein madad karo</button>
+  <button data-q="Tum kaun ho aur kya kar sakte ho?">❓ Tum kaun ho?</button>
+</div>
+<form id="f" autocomplete="off">
+  <input id="t" type="text" placeholder="Owner AI se poochiye" enterkeyhint="send" aria-label="Apna sawal likhiye">
+  <button type="button" id="mic" aria-label="Bolkar poochiye"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <button type="submit" id="send" aria-label="Bhejo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+</form>
+<footer>Developed by Vikash</footer>
 <script>
-const log=document.getElementById('log'),f=document.getElementById('f'),t=document.getElementById('t');
-document.getElementById('y').textContent=new Date().getFullYear();
 const API="https://owner-ai.nk0025332.workers.dev";
-const hist=[];
+const $=id=>document.getElementById(id),log=$('log'),t=$('t'),hist=[];
 let busy=false;
 function add(txt,who){const d=document.createElement('div');d.className='m '+who;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
 async function ask(q){
   q=q.trim();if(!q||busy)return;
-  busy=true;add(q,'me');hist.push({role:'user',content:q});
+  busy=true;$('empty').hidden=true;$('sug').hidden=true;t.value='';
+  add(q,'me');hist.push({role:'user',content:q});
   const w=add('Soch raha hun...','ai');
   try{
     const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})});
     const j=await r.json();
     const a=j.reply||'Jawab nahi mila, dobara try kijiye.';
     w.textContent=a;hist.push({role:'assistant',content:a});
-  }catch(e){w.textContent='Network ki dikkat hai. Internet check karke dobara try kijiye.'}
+  }catch(e){w.textContent='Network ki dikkat hai. Internet check karke dobara try kijiye.';hist.pop()}
   busy=false;log.scrollTop=log.scrollHeight;
 }
-f.addEventListener('submit',e=>{e.preventDefault();ask(t.value);t.value=''});
-document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>ask(b.textContent));
-add("Namaste! Main Owner AI hun. Kuch poochiye.","ai");
+$('f').onsubmit=e=>{e.preventDefault();ask(t.value)};
+document.querySelectorAll('#sug button').forEach(b=>b.onclick=()=>ask(b.dataset.q));
+$('menu').onclick=()=>{$('about').hidden=!$('about').hidden};
+$('new').onclick=()=>{hist.length=0;log.querySelectorAll('.m').forEach(e=>e.remove());$('empty').hidden=false;$('sug').hidden=false;busy=false};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){const rec=new SR();rec.lang='hi-IN';rec.onresult=e=>ask(e.results[0][0].transcript);$('mic').onclick=()=>{try{rec.start()}catch(e){}}}
+else $('mic').hidden=true;
 </script>
 </body>
 </html>
