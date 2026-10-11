@@ -59,7 +59,7 @@ footer{padding-bottom:40px;color:var(--mute);font-size:13px;border-top:1px solid
   </section>
 
   <section class="chat" id="chat" aria-label="Owner AI chat">
-    <div class="chat-top"><b>Owner AI</b><span>Demo mode</span></div>
+    <div class="chat-top"><b>Owner AI</b><span>Live</span></div>
     <div id="log" aria-live="polite"></div>
     <div class="chips">
       <button>Tum kaun ho?</button>
@@ -82,20 +82,27 @@ footer{padding-bottom:40px;color:var(--mute);font-size:13px;border-top:1px solid
   </section>
 </main>
 
-<footer>&copy; <span id="y"></span> Owner AI. Ye abhi demo hai: jawab site ke andar se aate hain, kisi AI service se nahi.</footer>
+<footer>&copy; <span id="y"></span> Owner AI. AI jawab galat bhi ho sakte hain, zaroori baatein dobara jaanch lein.</footer>
 
 <script>
 const log=document.getElementById('log'),f=document.getElementById('f'),t=document.getElementById('t');
 document.getElementById('y').textContent=new Date().getFullYear();
-const rules=[
- [/kaun|who|naam|name/i,"Main Owner AI hun, aapka apna AI saathi. Abhi demo mode mein hun, jaldi hi asli jawab dunga."],
- [/kya kar|help|madad|kar sakte/i,"Main sawalon ke jawab, idea, aur likhne mein madad kar sakta hun. Try kijiye: 'Ek idea do'."],
- [/idea|suggest|sujhav/i,"Idea: apni padhai ka ek chhota planner banaiye, roz ke 3 kaam likhkar tick karte jaiye."],
- [/hi|hello|namaste|hey/i,"Namaste! Main Owner AI hun. Aap kya poochna chahte hain?"]
-];
-function add(txt,who){const d=document.createElement('div');d.className='m '+who;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight}
-function reply(q){const r=rules.find(x=>x[0].test(q));setTimeout(()=>add(r?r[1]:"Ye abhi demo mode mein samajh nahi aaya. 'Tum kaun ho?' ya 'Ek idea do' try kijiye.","ai"),450)}
-function ask(q){q=q.trim();if(!q)return;add(q,'me');reply(q)}
+const API="https://owner-ai.nk0025332.workers.dev";
+const hist=[];
+let busy=false;
+function add(txt,who){const d=document.createElement('div');d.className='m '+who;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+async function ask(q){
+  q=q.trim();if(!q||busy)return;
+  busy=true;add(q,'me');hist.push({role:'user',content:q});
+  const w=add('Soch raha hun...','ai');
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})});
+    const j=await r.json();
+    const a=j.reply||'Jawab nahi mila, dobara try kijiye.';
+    w.textContent=a;hist.push({role:'assistant',content:a});
+  }catch(e){w.textContent='Network ki dikkat hai. Internet check karke dobara try kijiye.'}
+  busy=false;log.scrollTop=log.scrollHeight;
+}
 f.addEventListener('submit',e=>{e.preventDefault();ask(t.value);t.value=''});
 document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>ask(b.textContent));
 add("Namaste! Main Owner AI hun. Kuch poochiye.","ai");
