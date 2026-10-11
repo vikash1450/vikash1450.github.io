@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Owner AI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f6bff">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#fff;--fg:#1b1b1b;--mute:#6c6c6c;--card:#f1f1f1;--line:#e3e3e3;--blue:#2f6bff;--pill:#e6efff;--pillfg:#1558d6}
@@ -141,5 +144,6 @@ window.addEventListener('load',()=>{
   }catch(e){$('lerr').textContent='Google login load nahi hua. Internet check karke page refresh kijiye.'}
 });
 </script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
 </body>
 </html>
