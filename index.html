@@ -53,6 +53,7 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
 .soon{color:var(--mute);font-size:13px;margin:18px 0 0}
 #lerr{color:#d33;margin:12px 0 0;font-size:14px}
 </style>
+<style>#photo{background:none;border:0;cursor:pointer;color:inherit;padding:8px;display:flex;align-items:center}</style>
 </head>
 <body>
 <section id="login" hidden>
@@ -92,6 +93,8 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
 </div>
 <form id="f" autocomplete="off">
   <input id="t" type="text" placeholder="Owner AI se poochiye" enterkeyhint="send" aria-label="Apna sawal likhiye">
+<input type="file" id="pic" accept="image/*" hidden>
+<button type="button" id="photo" aria-label="Photo bhejo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg></button>
   <button type="button" id="mic" aria-label="Bolkar poochiye"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
   <button type="submit" id="send" aria-label="Bhejo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 </form>
@@ -101,7 +104,7 @@ footer{text-align:center;font-size:12.5px;color:var(--mute);padding:2px 0 8px}
 const CLIENT_ID="609471418872-jt0614ddbmqq6smuak3luvdv71ak4d5f.apps.googleusercontent.com";
 const API="https://owner-ai.nk0025332.workers.dev";
 const $=id=>document.getElementById(id),log=$('log'),t=$('t'),hist=[];
-let busy=false,tok=null;
+let busy=false,tok=null,pendingImg=null;
 function jwt(c){try{const b=c.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b),x=>x.charCodeAt(0))))}catch(e){return null}}
 function load(){try{return localStorage.getItem('oai_tok')}catch(e){return null}}
 function save(v){try{v?localStorage.setItem('oai_tok',v):localStorage.removeItem('oai_tok')}catch(e){}}
@@ -114,12 +117,12 @@ function reset(){hist.length=0;log.querySelectorAll('.m').forEach(e=>e.remove())
 function logout(msg){save(null);reset();show(null);$('lerr').textContent=msg||'';try{google.accounts.id.disableAutoSelect()}catch(e){}}
 function add(txt,who){const d=document.createElement('div');d.className='m '+who;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
 async function ask(q){
-  q=q.trim();if(!q||busy||!tok)return;
-  busy=true;$('empty').hidden=true;$('sug').hidden=true;t.value='';
-  add(q,'me');hist.push({role:'user',content:q});
+  q=q.trim();if(!q&&pendingImg)q='Is photo ke baare mein batao.';if(!q||busy||!tok)return;
+  busy=true;$('empty').hidden=true;$('sug').hidden=true;t.value='';const img=pendingImg;pendingImg=null;$('photo').style.background='';t.placeholder='Owner AI se poochiye';
+  const mb=add(q,'me');if(img){const im=document.createElement('img');im.src=img;im.style.cssText='display:block;max-width:100%;max-height:200px;border-radius:12px;margin-bottom:6px';mb.prepend(im)}hist.push({role:'user',content:q});
   const w=add('Soch raha hun...','ai');
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({messages:hist})});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({messages:hist,image:img})});
     if(r.status===401){logout('Login ka samay khatam ho gaya. Dobara login kijiye.');return}
     const j=await r.json();
     const a=j.reply||'Jawab nahi mila, dobara try kijiye.';
@@ -128,6 +131,9 @@ async function ask(q){
   busy=false;log.scrollTop=log.scrollHeight;
 }
 $('f').onsubmit=e=>{e.preventDefault();ask(t.value)};
+function pickPhoto(f){if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);pendingImg=c.toDataURL('image/jpeg',0.8);$('photo').style.background='#dbe7ff';t.placeholder='Photo lag gayi - ab sawal likhiye';t.focus()};im.src=r.result};r.readAsDataURL(f)}
+$('photo').onclick=()=>$('pic').click();
+$('pic').onchange=e=>{pickPhoto(e.target.files[0]);e.target.value=''};
 document.querySelectorAll('#sug button').forEach(b=>b.onclick=()=>ask(b.dataset.q));
 $('menu').onclick=()=>{$('about').hidden=!$('about').hidden};
 $('new').onclick=reset;
