@@ -158,7 +158,7 @@ async function ask(q){
     if(r.status===401){logout('Login ka samay khatam ho gaya. Dobara login kijiye.');return}
     const j=await r.json();
     const a=j.reply||'Jawab nahi mila, dobara try kijiye.';
-    w.textContent=a;hist.push({role:'assistant',content:a});window.oaiAfter&&window.oaiAfter(a);
+    w.textContent=a;if(j.generated){const gi=document.createElement('img');gi.src=j.generated;gi.style.cssText='display:block;max-width:100%;border-radius:12px;margin-top:8px';w.appendChild(gi)}hist.push({role:'assistant',content:a});window.oaiAfter&&window.oaiAfter(a);
   }catch(e){w.textContent='Network ki dikkat hai. Internet check karke dobara try kijiye.';hist.pop()}
   busy=false;log.scrollTop=log.scrollHeight;
 }
